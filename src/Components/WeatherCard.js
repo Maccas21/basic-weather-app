@@ -38,8 +38,6 @@ TabPanel.propTypes = {
 };
 
 function WeatherCard(props) {
-	console.log(props);
-
 	const [tabValue, setTabValue] = React.useState(0);
 
 	const handleChange = (event, newValue) => {
@@ -50,13 +48,13 @@ function WeatherCard(props) {
 		<div>
 			<Card>
 				<TabPanel value={tabValue} index={0}>
-					<WeatherCardContent weather={props.weather.weather[0]} lastUpdate={props.lastUpdate} city={props.city}/>
+					<WeatherCardContent weather={props.weather.weather[0]} lastUpdate={props.lastUpdate} city={props.city} timeZone={props.timeZone}/>
 				</TabPanel>
 				<TabPanel value={tabValue} index={1}>
-					<WeatherCardContent weather={props.weather.weather[1]} lastUpdate={props.lastUpdate} city={props.city}/>
+					<WeatherCardContent weather={props.weather.weather[1]} lastUpdate={props.lastUpdate} city={props.city} timeZone={props.timeZone}/>
 				</TabPanel>
 				<TabPanel value={tabValue} index={2}>
-					<WeatherCardContent weather={props.weather.weather[2]} lastUpdate={props.lastUpdate} city={props.city}/>
+					<WeatherCardContent weather={props.weather.weather[2]} lastUpdate={props.lastUpdate} city={props.city} timeZone={props.timeZone}/>
 				</TabPanel>
 				<AppBar position="static">
 					<Tabs

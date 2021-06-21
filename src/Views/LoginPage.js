@@ -49,11 +49,6 @@ export default function LoginPage() {
     history.push("/register");
   };
 
-  const handleForgotPasswordClick = (event) => {
-    event.preventDefault();
-    history.push("/forgot");
-  };
-
   const validateFields = () => {
     const email = emailRef.current.value;
     const password = passwordRef.current.value;
@@ -169,16 +164,6 @@ export default function LoginPage() {
                 onClick={handleSignUpClick}
               >
                 Sign Up
-              </Link>
-            </Typography>
-            <Typography variant="body1">
-              Forgot your password?{" "}
-              <Link
-                className={classes.link}
-                href="#"
-                onClick={handleForgotPasswordClick}
-              >
-                Forgot password
               </Link>
             </Typography>
           </Grid>

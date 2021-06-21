@@ -1,11 +1,12 @@
 import React from "react";
 import { Component } from "react";
-import firebase, { auth } from "../Common/firebase";
+import firebase, { auth , database} from "../Common/firebase";
 
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import Typography from "@material-ui/core/Typography";
 
 import WeatherCard from "../Components/WeatherCard";
 
@@ -35,7 +36,7 @@ class Home extends Component {
 				Moscow: { cLat: 55.7522, cLong: 37.6156 },
 				Dhaka: { cLat: 23.7104, cLong: 90.4074 },
 				Cairo: { cLat: 30.0626, cLong: 31.2497 },
-				LosAngeles: { cLat: 34.0522, cLong: -18.2437 },
+				LosAngeles: { cLat: 34.0522, cLong: -118.2437 },
 				Bangkok: { cLat: 13.75, cLong: 100.5167 },
 				London: { cLat: 51.5085, cLong: -0.1257 },
 			},
@@ -64,7 +65,11 @@ class Home extends Component {
 				"Bangkok",
 				"London",
 			],
-			weather: [],
+			weather: [
+				//Name: "",
+				//weather: [],
+				//LastUpdate: new Date(),
+			],
 			cardWeatherNames: ["Tokyo","Tokyo","Tokyo","Tokyo"],
 			hasData: false,
 			tabValue: 0,
@@ -72,12 +77,20 @@ class Home extends Component {
 	}
 
 	componentDidMount = async () => {
-		this.getWeather("Tokyo", 0);
+		//get cities from db
+		if(this.state.user!= null) 
+			this.getCityFromDB();
+		
+		//get weather from api
+		for(let i = 0; i < this.state.cardWeatherNames.length; i++)
+			this.getWeather(this.state.cardWeatherNames[i], i);
 
-		//get cities from db and get weather
-		this.state.weather.push(this.state.weather[0]);
-		this.state.weather.push(this.state.weather[0]);
-		this.state.weather.push(this.state.weather[0]);
+		//this.getWeather("Tokyo", 0);
+		//this.getWeather("Tokyo", 1);
+		//this.getWeather("Tokyo", 2);
+		//this.getWeather("Tokyo", 3);
+
+		
 	};
 
 	getAPIURL(CityName) {
@@ -97,7 +110,7 @@ class Home extends Component {
 	}
 
 	getWeather(City, weatherIndex){
-		const url = this.getAPIURL(City);
+		const url = this.getAPIURL(City.replace(" ", ""));
 		const req = new Request(url);
 		fetch(req)
 			.then((response) => {
@@ -108,6 +121,7 @@ class Home extends Component {
 					Name: City,
 					weather: [],
 					LastUpdate: new Date(),
+					timeZone: data.timezone,
 				};
 
 				CityWeather.weather.push(data.daily[0]); //today
@@ -116,8 +130,28 @@ class Home extends Component {
 				
 				let weathers = this.state.weather;
 				weathers[weatherIndex] = CityWeather;
+				this.setState({weather: weathers});
 				this.setState({ hasData: true });
 			});
+	};
+
+	getCityFromDB(){
+		const cityRef = database()
+			.ref("cities/" + this.state.user.uid + "/");
+
+		cityRef.on("value", (snapshot) => {
+			try {
+				let cities = snapshot.val();
+				let stateCities = this.state.cardWeatherNames;
+				
+				for(let i=0; i < cities.length; i++) {stateCities[i+1] = cities[i];}
+				
+				this.setState({cardWeatherNames: stateCities});
+			}
+			catch(e) {
+				console.log(e);
+			}
+		});
 	}
 
 	signInOut = (event) => {
@@ -125,25 +159,64 @@ class Home extends Component {
         else this.props.history.push("/login");
 	};
 
-	autoCompleteOnChange = (event, index, newValue) => {
+	weatherCardComponent = (index) => {
+		if(this.state.weather[index] != null){
+			return (
+				<>
+					<Autocomplete
+						id={"txt_city_names"+index}
+						value={this.state.cardWeatherNames[index]}
+						defaultValue={this.state.cardWeatherNames[index]}
+						disableClearable
+						onChange={(event, newValue) =>
+							this.autoCompleteOnChange(event, index, newValue)
+						}
+						options={this.state.cityNames}
+						style={{ width: 300 }}
+						renderInput={(params) => (
+							<TextField {...params} label="Cities" variant="outlined" />
+						)}
+						justify="center"
+					/>
+					<WeatherCard
+						weather={this.state.weather[index]}
+						lastUpdate={this.state.weather[index].LastUpdate}
+						city={this.state.cardWeatherNames[index]}
+						timeZone={this.state.weather[index].timeZone}
+					/>
+				</>
+			);
+		}
+	}
+
+	autoCompleteOnChange = async(event, index, newValue) => {
 		let dropDownVals = this.state.cardWeatherNames;
 		dropDownVals[index] = newValue;
 		this.setState({cardWeatherNames: dropDownVals});
 
 		this.getWeather(newValue.replace(" ", ""), index);
-		console.log("Change: " + this.state.cardWeatherNames[index]);
-		console.log("Index: " + index);
-		console.log("newValue city name:" + newValue);
+
+		//change database city if saved locations
+		if(this.state.user != null){
+			await database().ref("cities/" + this.state.user.uid + "/" + (index-1) + "/").set(newValue)
+			.catch((error) => console.log(error));
+		}
 	}
 
 	render() {
-		if (this.state.user != null) {
-			console.log("LOGGED IN");
-		} else {
-			console.log("NOT LOGGED IN");
-		}
-
 		if (this.state.hasData) {
+
+			var loggedInCards = [];
+
+			if (this.state.user != null) {
+				try{
+					for (let i = 1; i < 4; i++)
+						loggedInCards[i-1] = this.weatherCardComponent(i);
+				} catch(e){
+					console.log(e);
+				}
+			}
+
 			return (
 				<div>
 					<Grid container spacing={6} justify="flex-end">
@@ -162,40 +235,24 @@ class Home extends Component {
 					<Grid container spacing={3}>
 						<Grid item xs />
 						<Grid item xs>
-							<Autocomplete
-								id="txt_city_names_1"
-								value={this.state.cardWeatherNames[0]}
-								defaultValue={this.state.cardWeatherNames[0]}
-								disableClearable
-								onChange={(event, newValue) => this.autoCompleteOnChange(event, 0, newValue)}
-								options={this.state.cityNames}
-								style={{ width: 300 }}
-								renderInput={(params) => (
-									<TextField
-										{...params}
-										label="Cities"
-										variant="outlined"
-									/>
-								)}
-								justify="center"
-							/>
-							<WeatherCard
-								weather={this.state.weather[0]}
-								lastUpdate={this.state.weather[0].LastUpdate}
-								city={this.state.cardWeatherNames[0]}
-							/>
+							{this.weatherCardComponent(0)}
 						</Grid>
 						<Grid item xs />
 					</Grid>
 					<Grid container spacing={3}>
 						<Grid item xs>
-							<TextField disabled label="label" />
+							{this.state.user != null? <Typography variant="h6">Saved Locations:</Typography> : <div/>}
+						</Grid>
+					</Grid>
+					<Grid container spacing={3}>
+						<Grid item xs>
+							{loggedInCards[0]}
 						</Grid>
 						<Grid item xs>
-							<TextField disabled label="label" />
+							{loggedInCards[1]}
 						</Grid>
 						<Grid item xs>
-							<TextField disabled label="label" />
+							{loggedInCards[2]}
 						</Grid>
 					</Grid>
 				</div>

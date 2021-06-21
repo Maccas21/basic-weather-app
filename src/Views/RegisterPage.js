@@ -144,6 +144,12 @@ export default function RegisterPage() {
           email: email,
         });
 
+      await database()
+        .ref("cities/" + userId)
+        .set([
+          "Tokyo","Tokyo","Tokyo"
+        ]);
+
       history.push("/");
     } catch (error) {
       setRegisterError(error.message);

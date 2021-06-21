@@ -39,7 +39,12 @@ class RouteConfig extends Component{
       render() {
         return (
           <Switch>
-            <Route exact path={"/home"} component={HomePage} />
+            {/* <Route exact path={"/home"} component={HomePage} /> */}
+            <PublicRoute
+              currentUser={this.state.currentUser}
+              path="/home"
+              component={HomePage}
+            />
             <PublicRoute
               currentUser={this.state.currentUser}
               path={"/login"}

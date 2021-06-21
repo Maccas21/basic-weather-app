@@ -18,23 +18,11 @@ function WeatherCardContent(props) {
 					<Typography>Humidity: {props.weather.humidity} %</Typography>
 					<Typography>
 						Sunrise:{" "}
-						{("0" + new Date(props.weather.sunrise * 1000).getHours()).slice(
-							-2
-						) +
-							":" +
-							("0" + new Date(props.weather.sunrise * 1000).getMinutes()).slice(
-								-2
-							)}
+						{(new Date(props.weather.sunrise * 1000)).toLocaleString("en-AU", {hour:"2-digit", minute:"2-digit", hour12:false, timeZone:props.timeZone})}
 					</Typography>
 					<Typography>
 						Sunset:{" "}
-						{("0" + new Date(props.weather.sunset * 1000).getHours()).slice(
-							-2
-						) +
-							":" +
-							("0" + new Date(props.weather.sunset * 1000).getMinutes()).slice(
-								-2
-							)}
+						{(new Date(props.weather.sunset * 1000)).toLocaleString("en-AU", {hour:"2-digit", minute:"2-digit", hour12:false, timeZone:props.timeZone})}
 					</Typography>
 					<Typography>UV: {props.weather.uvi}</Typography>
 				</Grid>
@@ -49,9 +37,7 @@ function WeatherCardContent(props) {
 					/>
 					<Typography align="right">Last Update:</Typography>
 					<Typography align="right">
-						{("0" + new Date(props.lastUpdate).getHours()).slice(-2) +
-							":" +
-							("0" + new Date(props.lastUpdate).getMinutes()).slice(-2)}
+						{props.lastUpdate.toTimeString().slice(0,5)}
 					</Typography>
 				</Grid>
 			</Grid>
