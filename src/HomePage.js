@@ -5,6 +5,7 @@ import firebase, { auth } from "./firebase";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
+import Autocomplete from '@material-ui/lab/Autocomplete';
 
 import WeatherCard from "./WeatherCard";
 
@@ -64,37 +65,19 @@ class Home extends Component {
 				"London",
 			],
 			weather: [],
+			cardWeatherNames: ["Tokyo","Tokyo","Tokyo","Tokyo"],
 			hasData: false,
 			tabValue: 0,
 		};
 	}
 
 	componentDidMount = async () => {
-		const url = this.getAPIURL("Tokyo");
+		this.getWeather("Tokyo", 0);
 
-		const req = new Request(url);
-		fetch(req)
-			.then((response) => {
-				return response.json();
-			})
-			.then((data) => {
-				let CityWeather = {
-					Name: "Tokyo",
-					weather: [],
-					LastUpdate: new Date(),
-				};
-
-				CityWeather.weather.push(data.daily[0]); //today
-				CityWeather.weather.push(data.daily[1]); //tomorrow
-				CityWeather.weather.push(data.daily[2]); //day after
-
-				this.state.weather.push(CityWeather);
-				this.state.weather.push(CityWeather);
-				this.state.weather.push(CityWeather);
-				this.state.weather.push(CityWeather);
-
-				this.setState({ hasData: true });
-			});
+		//get cities from db and get weather
+		this.state.weather.push(this.state.weather[0]);
+		this.state.weather.push(this.state.weather[0]);
+		this.state.weather.push(this.state.weather[0]);
 	};
 
 	getAPIURL(CityName) {
@@ -113,10 +96,45 @@ class Home extends Component {
 		);
 	}
 
+	getWeather(City, weatherIndex){
+		const url = this.getAPIURL(City);
+		const req = new Request(url);
+		fetch(req)
+			.then((response) => {
+				return response.json();
+			})
+			.then((data) => {
+				let CityWeather = {
+					Name: City,
+					weather: [],
+					LastUpdate: new Date(),
+				};
+
+				CityWeather.weather.push(data.daily[0]); //today
+				CityWeather.weather.push(data.daily[1]); //tomorrow
+				CityWeather.weather.push(data.daily[2]); //day after
+				
+				let weathers = this.state.weather;
+				weathers[weatherIndex] = CityWeather;
+				this.setState({ hasData: true });
+			});
+	}
+
 	signInOut = (event) => {
 		if (this.state.user != null) firebase.auth().signOut();
         else this.props.history.push("/login");
 	};
+
+	autoCompleteOnChange = (event, index, newValue) => {
+		let dropDownVals = this.state.cardWeatherNames;
+		dropDownVals[index] = newValue;
+		this.setState({cardWeatherNames: dropDownVals});
+
+		this.getWeather(newValue.replace(" ", ""), index);
+		console.log("Change: " + this.state.cardWeatherNames[index]);
+		console.log("Index: " + index);
+		console.log("newValue city name:" + newValue);
+	}
 
 	render() {
 		if (this.state.user != null) {
@@ -144,10 +162,27 @@ class Home extends Component {
 					<Grid container spacing={3}>
 						<Grid item xs />
 						<Grid item xs>
+							<Autocomplete
+								id="txt_city_names_1"
+								value={this.state.cardWeatherNames[0]}
+								defaultValue={this.state.cardWeatherNames[0]}
+								disableClearable
+								onChange={(event, newValue) => this.autoCompleteOnChange(event, 0, newValue)}
+								options={this.state.cityNames}
+								style={{ width: 300 }}
+								renderInput={(params) => (
+									<TextField
+										{...params}
+										label="Cities"
+										variant="outlined"
+									/>
+								)}
+								justify="center"
+							/>
 							<WeatherCard
 								weather={this.state.weather[0]}
 								lastUpdate={this.state.weather[0].LastUpdate}
-								city="Tokyo"
+								city={this.state.cardWeatherNames[0]}
 							/>
 						</Grid>
 						<Grid item xs />
