@@ -1,13 +1,13 @@
 import React from "react";
 import { Component } from "react";
-import firebase, { auth } from "./firebase";
+import firebase, { auth } from "../Common/firebase";
 
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Autocomplete from '@material-ui/lab/Autocomplete';
 
-import WeatherCard from "./WeatherCard";
+import WeatherCard from "../Components/WeatherCard";
 
 class Home extends Component {
 	constructor() {

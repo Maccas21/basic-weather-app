@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import { Switch, Route, withRouter } from "react-router-dom";
-import { auth } from "./firebase";
-import { PrivateRoute, PublicRoute } from "./AuthGuard";
+import { auth } from "./Common/firebase";
+import { PrivateRoute, PublicRoute } from "./Common/AuthGuard";
 
 //Pages
-import LoginPage from "./LoginPage";
-import HomePage from "./HomePage";
-import RegisterPage from "./RegisterPage";
+import LoginPage from "./Views/LoginPage";
+import HomePage from "./Views/HomePage";
+import RegisterPage from "./Views/RegisterPage";
 
 class RouteConfig extends Component{
     constructor() {

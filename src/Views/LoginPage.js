@@ -11,10 +11,10 @@ import {
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import { Alert } from "@material-ui/lab";
-import SideLayout from "./Components/SideLayout";
-import SubmitButton from "./Components/SubmitButton";
-import { validateEmail, validatePassword } from "./Common/Utils";
-import { auth } from "./firebase";
+import SideLayout from "../Components/SideLayout";
+import SubmitButton from "../Components/SubmitButton";
+import { validateEmail, validatePassword } from "../Common/Utils";
+import { auth } from "../Common/firebase";
 
 const useStyles = makeStyles((theme) => ({
   heading: {
