@@ -3,9 +3,9 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## APIs and Frameworks
--[Open Weather Map](https://openweathermap.org/)
--[Firebase](https://firebase.google.com/)
--[Material-UI](https://material-ui.com/)
+- [Open Weather Map](https://openweathermap.org/)
+- [Firebase](https://firebase.google.com/)
+- [Material-UI](https://material-ui.com/)
 
 ## Available Scripts
 
