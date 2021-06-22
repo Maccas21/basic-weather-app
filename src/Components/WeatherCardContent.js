@@ -7,13 +7,13 @@ import CardMedia from "@material-ui/core/CardMedia";
 
 function WeatherCardContent(props) {
 	return (
-		<CardContent>
+		<CardContent style={{color:"White"}}>
 			<Grid container justify="space-between" alignItems="center">
 				<Grid item>
 					<Typography variant="h5">{props.city}</Typography>
-					<Typography variant="h3">{props.weather.temp.day} °C</Typography>
-					<Typography>{props.weather.weather[0].description}</Typography>
-					<Typography>Wind: {props.weather.wind_speed} m/s</Typography>
+					<Typography variant="h3">{Math.round(props.weather.temp.max*10)/10} °C</Typography>
+					<Typography style={{textTransform: "capitalize"}}>{props.weather.weather[0].description}</Typography>
+					<Typography>Wind: {Math.round(props.weather.wind_speed*10)/10} m/s</Typography>
 					<Typography>Pressure: {props.weather.pressure} hPa</Typography>
 					<Typography>Humidity: {props.weather.humidity} %</Typography>
 					<Typography>
@@ -24,7 +24,7 @@ function WeatherCardContent(props) {
 						Sunset:{" "}
 						{(new Date(props.weather.sunset * 1000)).toLocaleString("en-AU", {hour:"2-digit", minute:"2-digit", hour12:false, timeZone:props.timeZone})}
 					</Typography>
-					<Typography>UV: {props.weather.uvi}</Typography>
+					<Typography>UV Index: {props.weather.uvi}</Typography>
 				</Grid>
 				<Grid item>
 					<CardMedia

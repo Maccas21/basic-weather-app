@@ -46,7 +46,7 @@ function WeatherCard(props) {
 
 	return (
 		<div>
-			<Card>
+			<Card style={{backgroundColor:"#4597e6"}}>
 				<TabPanel value={tabValue} index={0}>
 					<WeatherCardContent weather={props.weather.weather[0]} lastUpdate={props.lastUpdate} city={props.city} timeZone={props.timeZone}/>
 				</TabPanel>
@@ -56,16 +56,17 @@ function WeatherCard(props) {
 				<TabPanel value={tabValue} index={2}>
 					<WeatherCardContent weather={props.weather.weather[2]} lastUpdate={props.lastUpdate} city={props.city} timeZone={props.timeZone}/>
 				</TabPanel>
-				<AppBar position="static">
+				<AppBar position="static" style={{background:"#4597e6"}}>
 					<Tabs
 						value={tabValue}
 						onChange={handleChange}
                         centered
                         variant="fullWidth"
+						TabIndicatorProps={{style: {background:"White"}}}
 					>
-                            <Tab label="Today"/>
-                            <Tab label="Tomorrow"/>
-                            <Tab label="Later"/>
+						<Tab label="Today"/>
+						<Tab label="Tomorrow"/>
+						<Tab label="Later"/>
 					</Tabs>
 				</AppBar>
 			</Card>

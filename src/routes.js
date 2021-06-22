@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Switch, Route, withRouter } from "react-router-dom";
+import { Switch, withRouter } from "react-router-dom";
 import { auth } from "./Common/firebase";
 import { PrivateRoute, PublicRoute } from "./Common/AuthGuard";
 
